@@ -11,8 +11,10 @@ services:
     environment:
       TZ: ${TIMEZONE}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: 127.0.0.1#5335 # Backup: 1.1.1.2;1.0.0.2;
+      PIHOLE_DNS_: ${UNBOUND_NETWORK_IP}#5335 # Backup: 1.1.1.2;1.0.0.2;
       FTLCONF_LOCAL_IPV4: ${PIHOLE_FTLCONF_LOCAL_IPV4}
+    networks:
+    - dns
     volumes:
       - /home/${USER}/docker/files/pihole/etc-pihole:/etc/pihole
       - /home/${USER}/docker/files/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
@@ -27,9 +29,12 @@ services:
     image: mvance/unbound-rpi:latest
     environment:
       TZ: ${TIMEZONE}
-    ports:
-      - 5335:53/tcp
-      - 5335:53/udp
+    # ports:
+    #   - 5335:53/tcp
+    #   - 5335:53/udp
+    networks:
+      dns:
+        ipv4_address: ${UNBOUND_NETWORK_IP}
     volumes:
       - /home/${USER}/docker/files/unbound/config:/opt/unbound/etc/unbound/
       - /home/${USER}/docker/files/unbound/root.hints:/var/lib/unbound/root.hints
@@ -49,3 +54,11 @@ services:
     volumes:
       - /home/${USER}/docker/files/duckdns/config:/config
     restart: unless-stopped
+
+networks:
+  dns:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: ${ROUTER_SUBNET}
