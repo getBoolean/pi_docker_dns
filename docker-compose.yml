@@ -11,10 +11,12 @@ services:
     environment:
       TZ: ${TIMEZONE}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: ${UNBOUND_NETWORK_IP}#5335 # Backup: 1.1.1.2;1.0.0.2;
+      # PIHOLE_DNS_: ${UNBOUND_NETWORK_IP}#5335
+      PIHOLE_DNS_: 1.1.1.2;1.0.0.2;
       FTLCONF_LOCAL_IPV4: ${PIHOLE_FTLCONF_LOCAL_IPV4}
-    networks:
-    - dns
+    # for unbound
+    # networks:
+    # - dns
     volumes:
       - /home/${USER}/docker/files/pihole/etc-pihole:/etc/pihole
       - /home/${USER}/docker/files/pihole/etc-dnsmasq.d:/etc/dnsmasq.d
@@ -24,21 +26,22 @@ services:
     #   - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     restart: unless-stopped
 
-  unbound:
-    container_name: unbound
-    image: mvance/unbound-rpi:latest
-    environment:
-      TZ: ${TIMEZONE}
-    # ports:
-    #   - 5335:53/tcp
-    #   - 5335:53/udp
-    networks:
-      dns:
-        ipv4_address: ${UNBOUND_NETWORK_IP}
-    volumes:
-      - /home/${USER}/docker/files/unbound/config:/opt/unbound/etc/unbound/
-      - /home/${USER}/docker/files/unbound/root.hints:/var/lib/unbound/root.hints
-    restart: unless-stopped
+  # seems to be too much for a Raspberry Pi
+  # unbound:
+  #   container_name: unbound
+  #   image: mvance/unbound-rpi:latest
+  #   environment:
+  #     TZ: ${TIMEZONE}
+  #   # ports:
+  #   #   - 5335:53/tcp
+  #   #   - 5335:53/udp
+  #   networks:
+  #     dns:
+  #       ipv4_address: ${UNBOUND_NETWORK_IP}
+  #   volumes:
+  #     - /home/${USER}/docker/files/unbound/config:/opt/unbound/etc/unbound/
+  #     - /home/${USER}/docker/files/unbound/root.hints:/var/lib/unbound/root.hints
+  #   restart: unless-stopped
 
   # Update duckdns with current external IP
   duckdns:
@@ -55,10 +58,11 @@ services:
       - /home/${USER}/docker/files/duckdns/config:/config
     restart: unless-stopped
 
-networks:
-  dns:
-    driver: bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: ${ROUTER_SUBNET}
+# for unbound
+# networks:
+#   dns:
+#     driver: bridge
+#     ipam:
+#       driver: default
+#       config:
+#         - subnet: ${ROUTER_SUBNET}
