@@ -11,7 +11,7 @@ services:
     environment:
       TZ: ${TIMEZONE}
       WEBPASSWORD: ${PIHOLE_WEBPASSWORD}
-      PIHOLE_DNS_: 1.1.1.2;1.0.0.2
+      PIHOLE_DNS_: 127.0.0.1#5335 # Backup: 1.1.1.2;1.0.0.2;
       FTLCONF_LOCAL_IPV4: ${PIHOLE_FTLCONF_LOCAL_IPV4}
     volumes:
       - /home/${USER}/docker/files/pihole/etc-pihole:/etc/pihole
@@ -22,18 +22,18 @@ services:
     #   - NET_ADMIN # Required if you are using Pi-hole as your DHCP server, else not needed
     restart: unless-stopped
 
-  # unbound:
-  #   container_name: unbound
-  #   image: mvance/unbound-rpi:latest
-  #   environment:
-  #     TZ: ${TIMEZONE}
-  #   ports:
-  #     - 5335:53/tcp
-  #     - 5335:53/udp
-  #   volumes:
-  #     - /home/${USER}/docker/files/unbound/config:/opt/unbound/etc/unbound/
-  #     - /home/${USER}/docker/files/unbound/root.hints:/var/lib/unbound/root.hints
-  #   restart: unless-stopped
+  unbound:
+    container_name: unbound
+    image: mvance/unbound-rpi:latest
+    environment:
+      TZ: ${TIMEZONE}
+    ports:
+      - 5335:53/tcp
+      - 5335:53/udp
+    volumes:
+      - /home/${USER}/docker/files/unbound/config:/opt/unbound/etc/unbound/
+      - /home/${USER}/docker/files/unbound/root.hints:/var/lib/unbound/root.hints
+    restart: unless-stopped
 
   # Update duckdns with current external IP
   duckdns:
