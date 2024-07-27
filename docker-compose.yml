@@ -14,6 +14,7 @@ services:
       # PIHOLE_DNS_: ${UNBOUND_NETWORK_IP}#5335
       PIHOLE_DNS_: 1.1.1.2;1.0.0.2;
       FTLCONF_LOCAL_IPV4: ${PIHOLE_FTLCONF_LOCAL_IPV4}
+      RATE_LIMIT: 0/0
     # for unbound
     # networks:
     # - dns
