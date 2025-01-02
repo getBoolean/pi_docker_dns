@@ -16,7 +16,7 @@ services:
       PIHOLE_DNS_: 1.1.1.1;1.0.0.1;
       FTLCONF_LOCAL_IPV4: ${PIHOLE_FTLCONF_LOCAL_IPV4}
       RATE_LIMIT: 0/0
-      DHCP_ACTIVE: true
+      DHCP_ACTIVE: false
       DHCP_ROUTER: 192.168.1.1
       DHCP_START: 192.168.1.2
       DHCP_END: 192.168.1.254
